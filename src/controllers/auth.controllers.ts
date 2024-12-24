@@ -177,3 +177,50 @@ export const logout: RequestHandler = catchAsync(
     });
   },
 );
+
+export const resendVerifyCode: RequestHandler = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { email } = req.body;
+
+    // Check if user exists in the database
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw next(
+        new AppError(
+          httpStatus.NOT_FOUND,
+          'User with this email does not exist!',
+        ),
+      );
+    }
+
+    if (user.isVerified) {
+      throw next(
+        new AppError(httpStatus.BAD_REQUEST, 'Email is already verified!'),
+      );
+    }
+
+    // Generate a new verification code
+    const newVerificationCode = Math.floor(
+      100000 + Math.random() * 900000,
+    ).toString();
+    const newVerifyCodeExpire = new Date(new Date().getTime() + 15 * 60 * 1000);
+
+    // Update user with the new verification code and expiry time
+    user.verifyCode = newVerificationCode;
+    user.verifyCodeExpire = newVerifyCodeExpire;
+    await user.save();
+
+    // Send the verification email
+    await sendEmail({
+      reciverEmail: user.email,
+      subject: 'Resend Verify Code',
+      body: verifyEmailTemplate(newVerificationCode),
+    });
+
+    // Respond to the client
+    res.status(httpStatus.OK).json({
+      success: true,
+      message: 'Verification code has been resent. Please check your email.',
+    });
+  },
+);
