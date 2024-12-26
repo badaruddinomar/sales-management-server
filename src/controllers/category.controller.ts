@@ -119,7 +119,7 @@ export const updateCategory: RequestHandler = catchAsync(
     res.status(httpStatus.OK).json({
       success: true,
       message: 'Category updated successfully',
-      data: updateCategory,
+      data: updatedCategory,
     });
   },
 );
