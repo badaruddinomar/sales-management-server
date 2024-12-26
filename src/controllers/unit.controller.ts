@@ -89,3 +89,37 @@ export const getSingleUnit: RequestHandler = catchAsync(
     });
   },
 );
+
+export const updateUnit: RequestHandler = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+    if (!id) {
+      throw new AppError(httpStatus.BAD_REQUEST, 'Unit id is required');
+    }
+    const { name } = req.body;
+
+    const unit = await Unit.findById(id);
+    if (!unit) throw new AppError(httpStatus.BAD_REQUEST, 'Unit not found');
+    const isAuthorIdMatch =
+      req.user._id.toString() === unit.createdBy.toString();
+    if (!isAuthorIdMatch) {
+      throw next(
+        new AppError(httpStatus.FORBIDDEN, 'You are not permitted to update'),
+      );
+    }
+
+    const updatedUnit = await Unit.findByIdAndUpdate(
+      id,
+      {
+        name,
+      },
+      { new: true },
+    );
+
+    res.status(httpStatus.OK).json({
+      success: true,
+      message: 'Unit updated successfully',
+      data: updatedUnit,
+    });
+  },
+);
