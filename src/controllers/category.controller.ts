@@ -123,3 +123,31 @@ export const updateCategory: RequestHandler = catchAsync(
     });
   },
 );
+export const deleteCategory: RequestHandler = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+    // get category from database--
+    const category = await Category.findByIdAndDelete(id);
+    // check if category belongs to user--
+    const isAuthorIdMatch =
+      req.user._id.toString() === category?.createdBy.toString();
+    if (!isAuthorIdMatch) {
+      throw next(
+        new AppError(
+          httpStatus.FORBIDDEN,
+          'You are not allowed to access this resource',
+        ),
+      );
+    }
+    // if category not found--
+    if (!category) {
+      throw next(new AppError(httpStatus.NOT_FOUND, 'Category not found'));
+    }
+    // send response to client--
+    res.status(httpStatus.OK).json({
+      success: true,
+      message: 'Category deleted successfully',
+      data: category,
+    });
+  },
+);

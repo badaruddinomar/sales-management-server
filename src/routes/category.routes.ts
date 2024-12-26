@@ -14,5 +14,6 @@ router.post('/create', isAuthenticatedUser, createCategory);
 router.get('/all', isAuthenticatedUser, getAllCategories);
 router.get('/single/:id', isAuthenticatedUser, getSingleCategory);
 router.put('/update/:id', isAuthenticatedUser, updateCategory);
+router.delete('/delete/:id', isAuthenticatedUser, deleteCategory);
 
 export default router;
