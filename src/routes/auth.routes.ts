@@ -1,6 +1,9 @@
 import express from 'express';
 import validateRequest from '../middleware/validateRequest';
-import { userSchema } from '../validation/user.validation';
+import {
+  signupSchema,
+  verificationCodeSchema,
+} from '../validation/auth.validation';
 import {
   signup,
   verifyEmail,
@@ -12,8 +15,12 @@ import {
 } from '../controllers/auth.controllers';
 const router = express.Router();
 
-router.post('/signup', validateRequest(userSchema), signup);
-router.post('/verify-email', verifyEmail);
+router.post('/signup', validateRequest(signupSchema), signup);
+router.post(
+  '/verify-email',
+  validateRequest(verificationCodeSchema),
+  verifyEmail,
+);
 router.post('/signin', signin);
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password', resetPassword);
