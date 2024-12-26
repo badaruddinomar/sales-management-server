@@ -1,6 +1,7 @@
 import express from 'express';
 import validateRequest from '../middleware/validateRequest';
 import {
+  forgotPasswordSchema,
   signinSchema,
   signupSchema,
   verificationCodeSchema,
@@ -23,7 +24,11 @@ router.post(
   verifyEmail,
 );
 router.post('/signin', validateRequest(signinSchema), signin);
-router.post('/forgot-password', forgotPassword);
+router.post(
+  '/forgot-password',
+  validateRequest(forgotPasswordSchema),
+  forgotPassword,
+);
 router.post('/reset-password', resetPassword);
 router.post('/logout', logout);
 router.post('/resend-verify-code', resendVerifyCode);

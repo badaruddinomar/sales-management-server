@@ -21,3 +21,8 @@ export const signinSchema = z.object({
   password: z.string().min(6, 'Password must be at least 6 characters long'),
 });
 export type SigninSchema = z.infer<typeof signinSchema>;
+
+export const forgotPasswordSchema = z.object({
+  email: z.string().email('Invalid email format'),
+});
+export type ForgotPasswordSchema = z.infer<typeof forgotPasswordSchema>;
