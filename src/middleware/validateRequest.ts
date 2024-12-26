@@ -9,7 +9,7 @@ const validateRequest =
 
     if (!result.success) {
       const formattedErrors = result.error.errors.map((error) => {
-        return `${error.path.join('.')} ${error.message}`;
+        return `${error.path.join('.')}: ${error.message}`;
       });
 
       res.status(httpStatus.BAD_REQUEST).json({
