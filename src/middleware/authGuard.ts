@@ -31,6 +31,14 @@ export const isAuthenticatedUser = async (
       ),
     );
   }
+  if (!user.isVerified) {
+    throw next(
+      new AppError(
+        httpStatus.UNAUTHORIZED,
+        'Please verify your email to access this resource.',
+      ),
+    );
+  }
   req.user = user as IUser;
   next();
 };
