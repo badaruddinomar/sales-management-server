@@ -22,7 +22,7 @@ export const signinSchema = z.object({
 });
 export type SigninSchema = z.infer<typeof signinSchema>;
 
-export const forgotPasswordSchema = z.object({
+export const emailVerifySchema = z.object({
   email: z.string().email('Invalid email format'),
 });
-export type ForgotPasswordSchema = z.infer<typeof forgotPasswordSchema>;
+export type EmailVerifySchema = z.infer<typeof emailVerifySchema>;
