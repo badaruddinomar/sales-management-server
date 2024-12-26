@@ -89,3 +89,37 @@ export const getSingleCategory: RequestHandler = catchAsync(
     });
   },
 );
+export const updateCategory: RequestHandler = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+    if (!id) {
+      throw new AppError(httpStatus.BAD_REQUEST, 'Category id is required');
+    }
+    const { name } = req.body;
+
+    const category = await Category.findById(id);
+    if (!category)
+      throw new AppError(httpStatus.BAD_REQUEST, 'Category not found');
+    const isAuthorIdMatch =
+      req.user._id.toString() === category.createdBy.toString();
+    if (!isAuthorIdMatch) {
+      throw next(
+        new AppError(httpStatus.FORBIDDEN, 'You are not permitted to update'),
+      );
+    }
+
+    const updatedCategory = await Category.findByIdAndUpdate(
+      id,
+      {
+        name,
+      },
+      { new: true },
+    );
+
+    res.status(httpStatus.OK).json({
+      success: true,
+      message: 'Category updated successfully',
+      data: updateCategory,
+    });
+  },
+);
