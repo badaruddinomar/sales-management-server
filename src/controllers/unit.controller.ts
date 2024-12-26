@@ -123,3 +123,32 @@ export const updateUnit: RequestHandler = catchAsync(
     });
   },
 );
+
+export const deleteUnit: RequestHandler = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+    // get unit from database--
+    const unit = await Unit.findByIdAndDelete(id);
+    // check if unit belongs to user--
+    const isAuthorIdMatch =
+      req.user._id.toString() === unit?.createdBy.toString();
+    if (!isAuthorIdMatch) {
+      throw next(
+        new AppError(
+          httpStatus.FORBIDDEN,
+          'You are not allowed to access this resource',
+        ),
+      );
+    }
+    // if unit not found--
+    if (!unit) {
+      throw next(new AppError(httpStatus.NOT_FOUND, 'Unit not found'));
+    }
+    // send response to client--
+    res.status(httpStatus.OK).json({
+      success: true,
+      message: 'Unit deleted successfully',
+      data: unit,
+    });
+  },
+);
