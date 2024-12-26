@@ -7,6 +7,11 @@ const unitSchema = new mongoose.Schema(
       required: [true, 'Unit name is required'],
       unique: true,
     },
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: [true, 'Unit creator is required'],
+    },
   },
   {
     timestamps: true,
