@@ -1,11 +1,12 @@
 import httpStatus from 'http-status';
 import config from '../config';
-import { Request, Response, ErrorRequestHandler } from 'express';
+import { Request, Response, ErrorRequestHandler, NextFunction } from 'express';
 
 const globalErrorHandler: ErrorRequestHandler = (
   err,
   _req: Request,
   res: Response,
+  _next: NextFunction,
 ) => {
   err.statusCode = err.statusCode || httpStatus.INTERNAL_SERVER_ERROR;
   err.message = err.message || 'Internal server error';

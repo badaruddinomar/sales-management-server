@@ -45,3 +45,21 @@ export const getSingleProduct: RequestHandler = catchAsync(
     });
   },
 );
+
+export const deleteProduct: RequestHandler = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+    // get product from database--
+    const product = await Product.findByIdAndDelete(id);
+    // if product not found--
+    if (!product) {
+      throw next(new AppError(httpStatus.NOT_FOUND, 'Product not found'));
+    }
+    // send response to client--
+    res.status(httpStatus.OK).json({
+      success: true,
+      message: 'Product deleted successfully',
+      data: product,
+    });
+  },
+);
