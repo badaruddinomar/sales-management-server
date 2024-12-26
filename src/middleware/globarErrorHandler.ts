@@ -1,13 +1,11 @@
 import httpStatus from 'http-status';
 import config from '../config';
-import AppError from '../utils/AppError';
-import { Request, Response, NextFunction, ErrorRequestHandler } from 'express';
+import { Request, Response, ErrorRequestHandler } from 'express';
 
 const globalErrorHandler: ErrorRequestHandler = (
   err,
   _req: Request,
   res: Response,
-  next: NextFunction,
 ) => {
   err.statusCode = err.statusCode || httpStatus.INTERNAL_SERVER_ERROR;
   err.message = err.message || 'Internal server error';
@@ -15,7 +13,8 @@ const globalErrorHandler: ErrorRequestHandler = (
   // wrong mongodb id error--
   if (err.name === 'CastError') {
     const message = `Resource not found: ${err.path}`;
-    err = next(new AppError(httpStatus.BAD_REQUEST, message));
+    err.statusCode = httpStatus.BAD_REQUEST;
+    err.message = message;
   }
   // mongoose duplicate key errors--
   if (err.code === 11000) {

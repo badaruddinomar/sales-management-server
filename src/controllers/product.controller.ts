@@ -27,3 +27,21 @@ export const createProduct: RequestHandler = catchAsync(
     });
   },
 );
+
+export const getSingleProduct: RequestHandler = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+    // get product from database--
+    const product = await Product.findById(id);
+    // if product not found--
+    if (!product) {
+      throw next(new AppError(httpStatus.NOT_FOUND, 'Product not found'));
+    }
+    // send response to client--
+    res.status(httpStatus.OK).json({
+      success: true,
+      message: 'Product fetched successfully',
+      data: product,
+    });
+  },
+);
