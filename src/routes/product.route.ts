@@ -6,6 +6,7 @@ import {
   deleteProduct,
   getAllProducts,
   getSingleProduct,
+  updateProduct,
 } from '../controllers/product.controller';
 import { isAuthenticatedUser } from '../middleware/authGuard';
 
@@ -19,6 +20,7 @@ router.post(
 );
 router.get('/all', isAuthenticatedUser, getAllProducts);
 router.get('/single/:id', isAuthenticatedUser, getSingleProduct);
+router.put('/update/:id', isAuthenticatedUser, updateProduct);
 router.delete('/delete/:id', isAuthenticatedUser, deleteProduct);
 
 export default router;

@@ -30,7 +30,7 @@ export const createProduct: RequestHandler = catchAsync(
 );
 export const getAllProducts: RequestHandler = catchAsync(
   async (req: Request, res: Response) => {
-    const { search, category } = req.query;
+    const { search } = req.query;
 
     const limit = parseInt(req.query.limit as string) || 10;
     const page = parseInt(req.query.page as string) || 1;
@@ -68,7 +68,9 @@ export const getSingleProduct: RequestHandler = catchAsync(
     // get product from database--
     const product = await Product.findById(id);
     // check if product belongs to user--
-    if (product?.createdBy.toString() !== req.user?._id) {
+    const isAuthorIdMatch =
+      req.user._id.toString() === product?.createdBy.toString();
+    if (!isAuthorIdMatch) {
       throw next(
         new AppError(
           httpStatus.FORBIDDEN,
@@ -88,14 +90,54 @@ export const getSingleProduct: RequestHandler = catchAsync(
     });
   },
 );
+export const updateProduct: RequestHandler = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+    if (!id) {
+      throw new AppError(httpStatus.BAD_REQUEST, 'Product id is required');
+    }
+    const { name, purchasePrice, salePrice, stock, unit, category } = req.body;
 
+    const product = await Product.findById(id);
+    if (!product)
+      throw new AppError(httpStatus.BAD_REQUEST, 'Product not found');
+    const isAuthorIdMatch =
+      req.user._id.toString() === product.createdBy.toString();
+    if (!isAuthorIdMatch) {
+      throw next(
+        new AppError(httpStatus.FORBIDDEN, 'You are not permitted to update'),
+      );
+    }
+
+    const updatedProduct = await Product.findByIdAndUpdate(
+      id,
+      {
+        name,
+        purchasePrice,
+        salePrice,
+        stock,
+        unit,
+        category,
+      },
+      { new: true },
+    );
+
+    res.status(httpStatus.OK).json({
+      success: true,
+      message: 'Product updated successfully',
+      data: updatedProduct,
+    });
+  },
+);
 export const deleteProduct: RequestHandler = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     // get product from database--
     const product = await Product.findByIdAndDelete(id);
     // check if product belongs to user--
-    if (product?.createdBy.toString() !== req.user?._id) {
+    const isAuthorIdMatch =
+      req.user._id.toString() === product?.createdBy.toString();
+    if (!isAuthorIdMatch) {
       throw next(
         new AppError(
           httpStatus.FORBIDDEN,
