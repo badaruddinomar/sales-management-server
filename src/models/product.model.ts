@@ -5,6 +5,7 @@ const productSchema = new mongoose.Schema(
     name: {
       type: String,
       required: [true, 'Product name is required'],
+      unique: [true, 'Product name must be unique'],
     },
     purchasePrice: {
       type: Number,
@@ -19,7 +20,7 @@ const productSchema = new mongoose.Schema(
     stock: {
       type: String,
       required: [true, 'Product stock is required'],
-      enum: ['in stock', 'out of stock'],
+      enum: ['in-stock', 'out-of-stock'],
     },
     unit: {
       type: mongoose.Schema.Types.ObjectId,

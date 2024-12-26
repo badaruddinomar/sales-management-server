@@ -22,8 +22,16 @@ export const isAuthenticatedUser = async (
   }
 
   const decodedData = jwt.verify(token, config.jwt_secret) as JwtPayload;
-
-  req.user = (await User.findById(decodedData.userId)) as IUser;
+  const user = await User.findById(decodedData?.userId);
+  if (!user) {
+    throw next(
+      new AppError(
+        httpStatus.UNAUTHORIZED,
+        'Please login to access this resource.',
+      ),
+    );
+  }
+  req.user = user as IUser;
   next();
 };
 

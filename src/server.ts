@@ -8,6 +8,7 @@ import config from './config';
 import notFound from './middleware/notFound';
 import globalErrorHandler from './middleware/globarErrorHandler';
 import authRoutes from './routes/auth.routes';
+import productRoutes from './routes/product.route';
 import fileUpload from 'express-fileupload';
 
 const app: Application = express();
@@ -38,6 +39,7 @@ app.get('/', (_req, res) => {
   res.send('Hello World!');
 });
 app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/products', productRoutes);
 // not found middleware
 app.use(notFound);
 app.use(globalErrorHandler);
