@@ -95,3 +95,36 @@ export const getSingleSale: RequestHandler = catchAsync(
     });
   },
 );
+
+export const updateSale: RequestHandler = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+    if (!id) {
+      throw new AppError(httpStatus.BAD_REQUEST, 'Sale id is required');
+    }
+
+    const sale = await Sale.findById(id);
+
+    if (!sale) {
+      throw new AppError(httpStatus.BAD_REQUEST, 'Sale not found');
+    }
+    const isAuthorIdMatch =
+      sale?.createdBy && req.user._id.toString() === sale.createdBy.toString();
+
+    if (!isAuthorIdMatch) {
+      throw next(
+        new AppError(httpStatus.FORBIDDEN, 'You are not permitted to update'),
+      );
+    }
+
+    const updatedSale = await Sale.findByIdAndUpdate(id, req.body, {
+      new: true,
+    });
+
+    res.status(httpStatus.OK).json({
+      success: true,
+      message: 'Sale updated successfully',
+      data: updatedSale,
+    });
+  },
+);
