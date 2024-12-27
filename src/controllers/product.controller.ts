@@ -103,9 +103,8 @@ export const updateProduct: RequestHandler = catchAsync(
     }
     const { name, purchasePrice, salePrice, stock, unit, category } = req.body;
 
-    const product = await Product.findById(id)
-      .populate({ path: 'unit', select: 'name' })
-      .populate({ path: 'category', select: 'name' });
+    const product = await Product.findById(id);
+
     if (!product) {
       throw new AppError(httpStatus.BAD_REQUEST, 'Product not found');
     }
@@ -128,7 +127,9 @@ export const updateProduct: RequestHandler = catchAsync(
         category,
       },
       { new: true },
-    );
+    )
+      .populate({ path: 'unit', select: 'name' })
+      .populate({ path: 'category', select: 'name' });
 
     res.status(httpStatus.OK).json({
       success: true,
@@ -141,7 +142,7 @@ export const deleteProduct: RequestHandler = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     // get product from database--
-    const product = await Product.findByIdAndDelete(id);
+    const product = await Product.findById(id);
     // if product not found--
     if (!product) {
       throw next(new AppError(httpStatus.NOT_FOUND, 'Product not found'));
@@ -157,7 +158,8 @@ export const deleteProduct: RequestHandler = catchAsync(
         ),
       );
     }
-
+    // get product from database & delete--
+    await Product.findByIdAndDelete(id);
     // send response to client--
     res.status(httpStatus.OK).json({
       success: true,
