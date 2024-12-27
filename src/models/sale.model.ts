@@ -40,8 +40,8 @@ const saleSchema = new mongoose.Schema(
     },
     paymentMethod: {
       type: String,
-      enum: ['Cash', 'Card', 'UPI', 'Credit'],
-      default: 'Cash',
+      enum: ['CASH', 'CARD', 'ONLINE'],
+      default: 'CASH',
     },
     saleDate: {
       type: Date,
