@@ -66,6 +66,10 @@ export const getSingleUnit: RequestHandler = catchAsync(
     const { id } = req.params;
     // get unit from database--
     const unit = await Unit.findById(id);
+    // if unit not found--
+    if (!unit) {
+      throw next(new AppError(httpStatus.NOT_FOUND, 'Unit not found'));
+    }
     // check if unit belongs to user--
     const isAuthorIdMatch =
       req.user._id.toString() === unit?.createdBy.toString();
@@ -77,10 +81,7 @@ export const getSingleUnit: RequestHandler = catchAsync(
         ),
       );
     }
-    // if unit not found--
-    if (!unit) {
-      throw next(new AppError(httpStatus.NOT_FOUND, 'Unit not found'));
-    }
+
     // send response to client--
     res.status(httpStatus.OK).json({
       success: true,
@@ -129,6 +130,10 @@ export const deleteUnit: RequestHandler = catchAsync(
     const { id } = req.params;
     // get unit from database--
     const unit = await Unit.findByIdAndDelete(id);
+    // if unit not found--
+    if (!unit) {
+      throw next(new AppError(httpStatus.NOT_FOUND, 'Unit not found'));
+    }
     // check if unit belongs to user--
     const isAuthorIdMatch =
       req.user._id.toString() === unit?.createdBy.toString();
@@ -140,10 +145,7 @@ export const deleteUnit: RequestHandler = catchAsync(
         ),
       );
     }
-    // if unit not found--
-    if (!unit) {
-      throw next(new AppError(httpStatus.NOT_FOUND, 'Unit not found'));
-    }
+
     // send response to client--
     res.status(httpStatus.OK).json({
       success: true,

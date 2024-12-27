@@ -71,6 +71,10 @@ export const getSingleProduct: RequestHandler = catchAsync(
     const product = await Product.findById(id)
       .populate({ path: 'unit', select: 'name' })
       .populate({ path: 'category', select: 'name' });
+    // if product not found--
+    if (!product) {
+      throw next(new AppError(httpStatus.NOT_FOUND, 'Product not found'));
+    }
     // check if product belongs to user--
     const isAuthorIdMatch =
       req.user._id.toString() === product?.createdBy.toString();
@@ -82,10 +86,7 @@ export const getSingleProduct: RequestHandler = catchAsync(
         ),
       );
     }
-    // if product not found--
-    if (!product) {
-      throw next(new AppError(httpStatus.NOT_FOUND, 'Product not found'));
-    }
+
     // send response to client--
     res.status(httpStatus.OK).json({
       success: true,
@@ -105,8 +106,9 @@ export const updateProduct: RequestHandler = catchAsync(
     const product = await Product.findById(id)
       .populate({ path: 'unit', select: 'name' })
       .populate({ path: 'category', select: 'name' });
-    if (!product)
+    if (!product) {
       throw new AppError(httpStatus.BAD_REQUEST, 'Product not found');
+    }
     const isAuthorIdMatch =
       req.user._id.toString() === product.createdBy.toString();
     if (!isAuthorIdMatch) {
@@ -140,6 +142,10 @@ export const deleteProduct: RequestHandler = catchAsync(
     const { id } = req.params;
     // get product from database--
     const product = await Product.findByIdAndDelete(id);
+    // if product not found--
+    if (!product) {
+      throw next(new AppError(httpStatus.NOT_FOUND, 'Product not found'));
+    }
     // check if product belongs to user--
     const isAuthorIdMatch =
       req.user._id.toString() === product?.createdBy.toString();
@@ -151,10 +157,7 @@ export const deleteProduct: RequestHandler = catchAsync(
         ),
       );
     }
-    // if product not found--
-    if (!product) {
-      throw next(new AppError(httpStatus.NOT_FOUND, 'Product not found'));
-    }
+
     // send response to client--
     res.status(httpStatus.OK).json({
       success: true,

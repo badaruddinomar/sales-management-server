@@ -66,6 +66,10 @@ export const getSingleCategory: RequestHandler = catchAsync(
     const { id } = req.params;
     // get category from database--
     const category = await Category.findById(id);
+    // if category not found--
+    if (!category) {
+      throw next(new AppError(httpStatus.NOT_FOUND, 'Category not found'));
+    }
     // check if category belongs to user--
     const isAuthorIdMatch =
       req.user._id.toString() === category?.createdBy.toString();
@@ -77,10 +81,7 @@ export const getSingleCategory: RequestHandler = catchAsync(
         ),
       );
     }
-    // if category not found--
-    if (!category) {
-      throw next(new AppError(httpStatus.NOT_FOUND, 'Category not found'));
-    }
+
     // send response to client--
     res.status(httpStatus.OK).json({
       success: true,
@@ -98,8 +99,10 @@ export const updateCategory: RequestHandler = catchAsync(
     const { name } = req.body;
 
     const category = await Category.findById(id);
-    if (!category)
+    if (!category) {
       throw new AppError(httpStatus.BAD_REQUEST, 'Category not found');
+    }
+
     const isAuthorIdMatch =
       req.user._id.toString() === category.createdBy.toString();
     if (!isAuthorIdMatch) {
@@ -128,6 +131,10 @@ export const deleteCategory: RequestHandler = catchAsync(
     const { id } = req.params;
     // get category from database--
     const category = await Category.findByIdAndDelete(id);
+    // if category not found--
+    if (!category) {
+      throw next(new AppError(httpStatus.NOT_FOUND, 'Category not found'));
+    }
     // check if category belongs to user--
     const isAuthorIdMatch =
       req.user._id.toString() === category?.createdBy.toString();
@@ -139,10 +146,7 @@ export const deleteCategory: RequestHandler = catchAsync(
         ),
       );
     }
-    // if category not found--
-    if (!category) {
-      throw next(new AppError(httpStatus.NOT_FOUND, 'Category not found'));
-    }
+
     // send response to client--
     res.status(httpStatus.OK).json({
       success: true,

@@ -58,3 +58,40 @@ export const getAllSales: RequestHandler = catchAsync(
     });
   },
 );
+
+export const getSingleSale: RequestHandler = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+    // get sale from database--
+    const sale = await Sale.findById(id)
+      .populate({ path: 'products.product', select: 'name' })
+      .populate({
+        path: 'products.unit',
+        select: 'name',
+      });
+
+    // if sale not found--
+    if (!sale) {
+      throw next(new AppError(httpStatus.NOT_FOUND, 'Sale not found'));
+    }
+    // check if sale belongs to user--
+    const isAuthorIdMatch =
+      sale?.createdBy && req.user._id.toString() === sale.createdBy.toString();
+
+    if (!isAuthorIdMatch) {
+      throw next(
+        new AppError(
+          httpStatus.FORBIDDEN,
+          'You are not allowed to access this resource',
+        ),
+      );
+    }
+
+    // send response to client--
+    res.status(httpStatus.OK).json({
+      success: true,
+      message: 'Sale fetched successfully',
+      data: sale,
+    });
+  },
+);
