@@ -45,7 +45,9 @@ export const getAllProducts: RequestHandler = catchAsync(
     const products = await Product.find(query)
       .skip(skip)
       .limit(limit)
-      .sort({ createdAt: sort });
+      .sort({ createdAt: sort })
+      .populate({ path: 'unit', select: 'name' })
+      .populate({ path: 'category', select: 'name' });
 
     const totalProducts = await Product.countDocuments();
     const totalPages = Math.ceil(totalProducts / limit);
@@ -66,7 +68,9 @@ export const getSingleProduct: RequestHandler = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     // get product from database--
-    const product = await Product.findById(id);
+    const product = await Product.findById(id)
+      .populate({ path: 'unit', select: 'name' })
+      .populate({ path: 'category', select: 'name' });
     // check if product belongs to user--
     const isAuthorIdMatch =
       req.user._id.toString() === product?.createdBy.toString();
@@ -98,7 +102,9 @@ export const updateProduct: RequestHandler = catchAsync(
     }
     const { name, purchasePrice, salePrice, stock, unit, category } = req.body;
 
-    const product = await Product.findById(id);
+    const product = await Product.findById(id)
+      .populate({ path: 'unit', select: 'name' })
+      .populate({ path: 'category', select: 'name' });
     if (!product)
       throw new AppError(httpStatus.BAD_REQUEST, 'Product not found');
     const isAuthorIdMatch =
@@ -153,7 +159,6 @@ export const deleteProduct: RequestHandler = catchAsync(
     res.status(httpStatus.OK).json({
       success: true,
       message: 'Product deleted successfully',
-      data: product,
     });
   },
 );
