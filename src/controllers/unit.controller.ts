@@ -128,8 +128,8 @@ export const updateUnit: RequestHandler = catchAsync(
 export const deleteUnit: RequestHandler = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
-    // get unit from database--
-    const unit = await Unit.findByIdAndDelete(id);
+    // get unit from the database--
+    const unit = await Unit.findById(id);
     // if unit not found--
     if (!unit) {
       throw next(new AppError(httpStatus.NOT_FOUND, 'Unit not found'));
@@ -145,7 +145,8 @@ export const deleteUnit: RequestHandler = catchAsync(
         ),
       );
     }
-
+    // get unit from database & delete--
+    await Unit.findByIdAndDelete(id);
     // send response to client--
     res.status(httpStatus.OK).json({
       success: true,
