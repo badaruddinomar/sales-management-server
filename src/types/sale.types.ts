@@ -1,4 +1,6 @@
 export interface ISaleSearchQuery {
-  name?: { $regex: string; $options: string };
+  customerName?: { $regex: string; $options: string };
+  customerPhone?: { $regex: string; $options: string };
   createdBy: string;
+  $or?: Array<{ [key: string]: { $regex: string; $options: string } }>;
 }
