@@ -1,6 +1,9 @@
 import express from 'express';
 import validateRequest from '../middleware/validateRequest';
-import { createProductSchema } from '../validation/product.validation';
+import {
+  createProductSchema,
+  updateProductSchema,
+} from '../validation/product.validation';
 import {
   createProduct,
   deleteProduct,
@@ -20,7 +23,12 @@ router.post(
 );
 router.get('/all', isAuthenticatedUser, getAllProducts);
 router.get('/single/:id', isAuthenticatedUser, getSingleProduct);
-router.put('/update/:id', isAuthenticatedUser, updateProduct);
+router.put(
+  '/update/:id',
+  isAuthenticatedUser,
+  validateRequest(updateProductSchema),
+  updateProduct,
+);
 router.delete('/delete/:id', isAuthenticatedUser, deleteProduct);
 
 export default router;
