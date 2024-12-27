@@ -90,6 +90,7 @@ export const getSingleCategory: RequestHandler = catchAsync(
     });
   },
 );
+
 export const updateCategory: RequestHandler = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
@@ -126,11 +127,13 @@ export const updateCategory: RequestHandler = catchAsync(
     });
   },
 );
+
 export const deleteCategory: RequestHandler = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     // get category from database--
-    const category = await Category.findByIdAndDelete(id);
+    const category = await Category.findById(id);
+
     // if category not found--
     if (!category) {
       throw next(new AppError(httpStatus.NOT_FOUND, 'Category not found'));
@@ -146,12 +149,12 @@ export const deleteCategory: RequestHandler = catchAsync(
         ),
       );
     }
-
+    // get category from database & delete--
+    await Category.findByIdAndDelete(id);
     // send response to client--
     res.status(httpStatus.OK).json({
       success: true,
       message: 'Category deleted successfully',
-      data: category,
     });
   },
 );
