@@ -41,7 +41,12 @@ export const getAllSales: RequestHandler = catchAsync(
     const sales = await Sale.find(query)
       .skip(skip)
       .limit(limit)
-      .sort({ createdAt: sort });
+      .sort({ createdAt: sort })
+      .populate({ path: 'products.product', select: 'name' })
+      .populate({
+        path: 'products.unit',
+        select: 'name',
+      });
 
     const totalSales = await Sale.countDocuments();
     const totalPages = Math.ceil(totalSales / limit);
@@ -125,6 +130,37 @@ export const updateSale: RequestHandler = catchAsync(
       success: true,
       message: 'Sale updated successfully',
       data: updatedSale,
+    });
+  },
+);
+export const deleteSale: RequestHandler = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+    // get sale from database--
+    const sale = await Sale.findById(id);
+    // if sale not found--
+    if (!sale) {
+      throw next(new AppError(httpStatus.NOT_FOUND, 'Sale not found'));
+    }
+
+    // check if sale belongs to user--
+    const isAuthorIdMatch =
+      sale?.createdBy && req.user._id.toString() === sale.createdBy.toString();
+    if (!isAuthorIdMatch) {
+      throw next(
+        new AppError(
+          httpStatus.FORBIDDEN,
+          'You are not allowed to access this resource',
+        ),
+      );
+    }
+    // get sale from database & delete--
+    await Sale.findByIdAndDelete(id);
+
+    // send response to client--
+    res.status(httpStatus.OK).json({
+      success: true,
+      message: 'Sale deleted successfully',
     });
   },
 );

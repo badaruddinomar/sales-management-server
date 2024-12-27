@@ -7,6 +7,7 @@ import {
 } from '../validation/sale.validation';
 import {
   createSale,
+  deleteSale,
   getAllSales,
   getSingleSale,
   updateSale,
@@ -29,5 +30,6 @@ router.put(
   validateRequest(updateSaleSchema),
   updateSale,
 );
+router.delete('/delete/:id', isAuthenticatedUser, deleteSale);
 
 export default router;
