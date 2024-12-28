@@ -8,6 +8,7 @@ import config from './config';
 import notFound from './middleware/notFound';
 import globalErrorHandler from './middleware/globarErrorHandler';
 import authRoutes from './routes/auth.routes';
+import userRoutes from './routes/user.routes';
 import productRoutes from './routes/product.route';
 import categoryRoutes from './routes/category.routes';
 import unitRoutes from './routes/unit.routes';
@@ -42,6 +43,7 @@ app.get('/', (_req, res) => {
   res.send('Hello World!');
 });
 app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/products', productRoutes);
 app.use('/api/v1/categories', categoryRoutes);
 app.use('/api/v1/units', unitRoutes);
