@@ -8,7 +8,8 @@ import { IProductSearchQuery } from '../types/product.types';
 export const createProduct: RequestHandler = catchAsync(
   async (req: Request, res: Response) => {
     // get data from request body--
-    const { name, purchasePrice, salePrice, stock, unit, category } = req.body;
+    const { name, purchasePrice, salePrice, stock, quantity, unit, category } =
+      req.body;
 
     // create new product--
     const product = await Product.create({
@@ -16,6 +17,7 @@ export const createProduct: RequestHandler = catchAsync(
       purchasePrice,
       salePrice,
       stock,
+      quantity,
       unit,
       category,
       createdBy: req.user?._id,
@@ -101,7 +103,8 @@ export const updateProduct: RequestHandler = catchAsync(
     if (!id) {
       throw new AppError(httpStatus.BAD_REQUEST, 'Product id is required');
     }
-    const { name, purchasePrice, salePrice, stock, unit, category } = req.body;
+    const { name, purchasePrice, salePrice, stock, unit, quantity, category } =
+      req.body;
 
     const product = await Product.findById(id);
 
@@ -124,6 +127,7 @@ export const updateProduct: RequestHandler = catchAsync(
         salePrice,
         stock,
         unit,
+        quantity,
         category,
       },
       { new: true },

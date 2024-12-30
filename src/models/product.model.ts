@@ -22,6 +22,11 @@ const productSchema = new mongoose.Schema(
       required: [true, 'Product stock is required'],
       enum: ['in-stock', 'out-of-stock'],
     },
+    quantity: {
+      type: Number,
+      required: [true, 'Product quantity is required'],
+      min: [1, 'Product quantity must be greater than 0'],
+    },
     unit: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Unit',
