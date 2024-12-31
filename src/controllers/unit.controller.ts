@@ -45,7 +45,7 @@ export const getAllUnits: RequestHandler = catchAsync(
       .limit(limit)
       .sort({ createdAt: sort });
 
-    const totalUnits = await Unit.countDocuments();
+    const totalUnits = await Unit.countDocuments({ createdBy: req.user?._id });
     const totalPages = Math.ceil(totalUnits / limit);
 
     res.status(httpStatus.OK).json({

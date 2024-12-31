@@ -45,7 +45,9 @@ export const getAllCategories: RequestHandler = catchAsync(
       .limit(limit)
       .sort({ createdAt: sort });
 
-    const totalCategories = await Category.countDocuments();
+    const totalCategories = await Category.countDocuments({
+      createdBy: req.user?._id,
+    });
     const totalPages = Math.ceil(totalCategories / limit);
 
     res.status(httpStatus.OK).json({

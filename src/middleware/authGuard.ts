@@ -10,34 +10,29 @@ export const isAuthenticatedUser = async (
   res: Response,
   next: NextFunction,
 ) => {
-  const { token } = req.cookies;
+  const token = req.cookies.token;
 
   if (!token) {
-    throw next(
-      new AppError(
-        httpStatus.UNAUTHORIZED,
-        'Please login to access this resource.',
-      ),
-    );
+    return res.status(httpStatus.UNAUTHORIZED).json({
+      success: false,
+      message: 'Please login to access this resource',
+    });
   }
 
   const decodedData = jwt.verify(token, config.jwt_secret) as JwtPayload;
+
   const user = await User.findById(decodedData?.userId);
   if (!user) {
-    throw next(
-      new AppError(
-        httpStatus.UNAUTHORIZED,
-        'Please login to access this resource.',
-      ),
-    );
+    return res.status(httpStatus.UNAUTHORIZED).json({
+      success: false,
+      message: 'Please login to access this resource',
+    });
   }
   if (!user.isVerified) {
-    throw next(
-      new AppError(
-        httpStatus.UNAUTHORIZED,
-        'Please verify your email to access this resource.',
-      ),
-    );
+    return res.status(httpStatus.UNAUTHORIZED).json({
+      success: false,
+      message: 'Please verify your email to access this resource',
+    });
   }
   req.user = user as IUser;
   next();

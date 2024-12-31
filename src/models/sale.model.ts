@@ -5,6 +5,7 @@ const saleSchema = new mongoose.Schema(
     customerName: {
       type: String,
       required: [true, 'Customer name is required'],
+      trim: true,
     },
     customerPhone: {
       type: String,

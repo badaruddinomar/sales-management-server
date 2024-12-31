@@ -48,7 +48,7 @@ export const getAllSales: RequestHandler = catchAsync(
         select: 'name',
       });
 
-    const totalSales = await Sale.countDocuments();
+    const totalSales = await Sale.countDocuments({ createdBy: req.user?._id });
     const totalPages = Math.ceil(totalSales / limit);
 
     res.status(httpStatus.OK).json({

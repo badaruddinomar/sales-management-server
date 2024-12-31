@@ -5,7 +5,7 @@ const productSchema = new mongoose.Schema(
     name: {
       type: String,
       required: [true, 'Product name is required'],
-      unique: [true, 'Product name must be unique'],
+      trim: true,
     },
     purchasePrice: {
       type: Number,

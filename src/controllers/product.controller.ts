@@ -51,7 +51,9 @@ export const getAllProducts: RequestHandler = catchAsync(
       .populate({ path: 'unit', select: 'name' })
       .populate({ path: 'category', select: 'name' });
 
-    const totalProducts = await Product.countDocuments();
+    const totalProducts = await Product.countDocuments({
+      createdBy: req.user?._id,
+    });
     const totalPages = Math.ceil(totalProducts / limit);
 
     res.status(httpStatus.OK).json({

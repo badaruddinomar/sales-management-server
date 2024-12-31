@@ -18,8 +18,16 @@ import fileUpload from 'express-fileupload';
 const app: Application = express();
 
 // middleware--
+const corsOptions = {
+  origin: config.client_url,
+  credentials: true,
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  // optionsSuccessStatus: 204,
+  optionsSuccessStatus: 200,
+  allowedHeaders: 'Content-Type,Authorization',
+};
 app.use(express.json());
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(helmet());
 app.use(compression());
 app.use(cookieParser());
