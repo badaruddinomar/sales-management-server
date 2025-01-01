@@ -10,11 +10,12 @@ export const getProfile: RequestHandler = catchAsync(
     if (!user) {
       throw next(new AppError(httpStatus.BAD_REQUEST, 'User not found!'));
     }
+    const { password: _password, ...userDataWithOutPass } = user.toObject();
     // send response to client--
     res.status(httpStatus.OK).json({
       success: true,
       message: 'User fetched successfully',
-      data: user,
+      data: userDataWithOutPass,
     });
   },
 );

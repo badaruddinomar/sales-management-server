@@ -48,11 +48,11 @@ export const signup: RequestHandler = catchAsync(
       body: verifyEmailTemplate(verificationCode),
     });
     // send response to client--
-    const { password: _password, ...userDataWithPass } = newUser.toObject();
+    const { password: _password, ...userDataWithOutPass } = newUser.toObject();
     res.status(httpStatus.CREATED).json({
       success: true,
       message: 'user created successfully',
-      data: userDataWithPass,
+      data: userDataWithOutPass,
     });
   },
 );
