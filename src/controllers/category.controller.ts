@@ -4,6 +4,7 @@ import AppError from '../utils/AppError';
 import Category from '../models/category.model';
 import httpStatus from 'http-status';
 import { ICategorySearchQuery } from '../types/category.types';
+import Product from '../models/product.model';
 
 export const createCategory: RequestHandler = catchAsync(
   async (req: Request, res: Response) => {
@@ -83,12 +84,17 @@ export const getSingleCategory: RequestHandler = catchAsync(
         ),
       );
     }
+    const productsCount = await Product.countDocuments({ category: id });
 
     // send response to client--
     res.status(httpStatus.OK).json({
       success: true,
       message: 'Category fetched successfully',
       data: category,
+      meta: {
+        productsCount,
+        message: `${productsCount} products under this category`,
+      },
     });
   },
 );
@@ -153,6 +159,8 @@ export const deleteCategory: RequestHandler = catchAsync(
     }
     // get category from database & delete--
     await Category.findByIdAndDelete(id);
+    // delete all products under this category--
+    await Product.deleteMany({ category: id });
     // send response to client--
     res.status(httpStatus.OK).json({
       success: true,

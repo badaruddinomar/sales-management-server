@@ -4,6 +4,7 @@ import catchAsync from '../utils/catchAsyn';
 import AppError from '../utils/AppError';
 import httpStatus from 'http-status';
 import Unit from '../models/unit.model';
+import Product from '../models/product.model';
 
 export const createUnit: RequestHandler = catchAsync(
   async (req: Request, res: Response) => {
@@ -81,12 +82,16 @@ export const getSingleUnit: RequestHandler = catchAsync(
         ),
       );
     }
-
+    const productsCount = await Product.countDocuments({ unit: id });
     // send response to client--
     res.status(httpStatus.OK).json({
       success: true,
       message: 'Unit fetched successfully',
       data: unit,
+      meta: {
+        productsCount,
+        message: `${productsCount} products under this unit`,
+      },
     });
   },
 );
@@ -147,6 +152,8 @@ export const deleteUnit: RequestHandler = catchAsync(
     }
     // get unit from database & delete--
     await Unit.findByIdAndDelete(id);
+    // delete all products under this category--
+    await Product.deleteMany({ unit: id });
     // send response to client--
     res.status(httpStatus.OK).json({
       success: true,
