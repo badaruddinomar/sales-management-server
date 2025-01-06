@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
+import { ISale } from '../types/sale.types';
 
-const saleSchema = new mongoose.Schema(
+const saleSchema = new mongoose.Schema<ISale>(
   {
     customerName: {
       type: String,
@@ -18,7 +19,7 @@ const saleSchema = new mongoose.Schema(
           ref: 'Product',
           required: true,
         },
-        quantity: {
+        unitAmount: {
           type: Number,
           required: true,
           min: 1,

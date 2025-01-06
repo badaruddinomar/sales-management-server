@@ -1,6 +1,6 @@
 import { ISaleSearchQuery } from './../types/sale.types';
 import { Request, Response, NextFunction, RequestHandler } from 'express';
-import catchAsync from '../utils/catchAsyn';
+import catchAsync from '../utils/catchAsync';
 import AppError from '../utils/AppError';
 import httpStatus from 'http-status';
 import Sale from '../models/sale.model';

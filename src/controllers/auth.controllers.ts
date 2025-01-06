@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction, RequestHandler } from 'express';
-import catchAsync from '../utils/catchAsyn';
+import catchAsync from '../utils/catchAsync';
 import User from '../models/user.model';
 import AppError from '../utils/AppError';
 import bcryptjs from 'bcryptjs';

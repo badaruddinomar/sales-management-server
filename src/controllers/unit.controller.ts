@@ -1,6 +1,6 @@
 import { IUnitSearchQuery } from './../types/unit.types';
 import { Request, Response, NextFunction, RequestHandler } from 'express';
-import catchAsync from '../utils/catchAsyn';
+import catchAsync from '../utils/catchAsync';
 import AppError from '../utils/AppError';
 import httpStatus from 'http-status';
 import Unit from '../models/unit.model';

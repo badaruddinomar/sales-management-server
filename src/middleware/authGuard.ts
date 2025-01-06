@@ -1,38 +1,41 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction, RequestHandler } from 'express';
 import AppError from '../utils/AppError';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import User from '../models/user.model';
 import config from '../config';
 import httpStatus from 'http-status';
 import { IUser } from '../interface/user.interface';
-export const isAuthenticatedUser = async (
+export const isAuthenticatedUser: RequestHandler = async (
   req: Request,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   const token = req.cookies.token;
 
   if (!token) {
-    return res.status(httpStatus.UNAUTHORIZED).json({
+    res.status(httpStatus.UNAUTHORIZED).json({
       success: false,
       message: 'Please login to access this resource',
     });
+    return;
   }
 
   const decodedData = jwt.verify(token, config.jwt_secret) as JwtPayload;
 
   const user = await User.findById(decodedData?.userId);
   if (!user) {
-    return res.status(httpStatus.UNAUTHORIZED).json({
+    res.status(httpStatus.UNAUTHORIZED).json({
       success: false,
       message: 'Please login to access this resource',
     });
+    return;
   }
   if (!user.isVerified) {
-    return res.status(httpStatus.UNAUTHORIZED).json({
+    res.status(httpStatus.UNAUTHORIZED).json({
       success: false,
       message: 'Please verify your email to access this resource',
     });
+    return;
   }
   req.user = user as IUser;
   next();

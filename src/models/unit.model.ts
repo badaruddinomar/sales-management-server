@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
+import { IUnit } from '../types/unit.types';
 
-const unitSchema = new mongoose.Schema(
+const unitSchema = new mongoose.Schema<IUnit>(
   {
     name: {
       type: String,

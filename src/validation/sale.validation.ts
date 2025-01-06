@@ -11,7 +11,7 @@ export const createSaleSchema = z.object({
     .array(
       z.object({
         product: z.string().min(1, 'Product is required'),
-        quantity: z.number().min(1, 'Quantity must be at least 1'),
+        unitAmount: z.number().min(1, 'Unit amount must be at least 1'),
         unit: z.string().min(1, 'Unit is required'),
         salePrice: z
           .number()
@@ -40,7 +40,10 @@ export const updateSaleSchema = z.object({
     .array(
       z.object({
         product: z.string().min(1, 'Product is required').optional(),
-        quantity: z.number().min(1, 'Quantity must be at least 1').optional(),
+        unitAmount: z
+          .number()
+          .min(1, 'Unit amount must be at least 1')
+          .optional(),
         unit: z.string().min(1, 'Unit is required').optional(),
         salePrice: z
           .number()

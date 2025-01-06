@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
+import { IProduct } from '../types/product.types';
 
-const productSchema = new mongoose.Schema(
+const productSchema = new mongoose.Schema<IProduct>(
   {
     name: {
       type: String,
@@ -22,10 +23,10 @@ const productSchema = new mongoose.Schema(
       required: [true, 'Product stock is required'],
       enum: ['in-stock', 'out-of-stock'],
     },
-    quantity: {
+    unitAmount: {
       type: Number,
-      required: [true, 'Product quantity is required'],
-      min: [1, 'Product quantity must be greater than 0'],
+      required: [true, 'Product unit amount is required'],
+      min: [1, 'Product unit amount must be greater than 0'],
     },
     unit: {
       type: mongoose.Schema.Types.ObjectId,

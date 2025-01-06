@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
+import { ICategory } from '../types/category.types';
 
-const categorySchema = new mongoose.Schema(
+const categorySchema = new mongoose.Schema<ICategory>(
   {
     name: {
       type: String,

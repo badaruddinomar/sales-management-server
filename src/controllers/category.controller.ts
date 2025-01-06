@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction, RequestHandler } from 'express';
-import catchAsync from '../utils/catchAsyn';
+import catchAsync from '../utils/catchAsync';
 import AppError from '../utils/AppError';
 import Category from '../models/category.model';
 import httpStatus from 'http-status';

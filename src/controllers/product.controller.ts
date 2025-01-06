@@ -1,15 +1,22 @@
 import { Request, Response, NextFunction, RequestHandler } from 'express';
 import httpStatus from 'http-status';
-import catchAsync from '../utils/catchAsyn';
 import Product from '../models/product.model';
 import AppError from '../utils/AppError';
 import { IProductSearchQuery } from '../types/product.types';
+import catchAsync from '../utils/catchAsync';
 
 export const createProduct: RequestHandler = catchAsync(
   async (req: Request, res: Response) => {
     // get data from request body--
-    const { name, purchasePrice, salePrice, stock, quantity, unit, category } =
-      req.body;
+    const {
+      name,
+      purchasePrice,
+      salePrice,
+      stock,
+      unitAmount,
+      unit,
+      category,
+    } = req.body;
 
     // create new product--
     const product = await Product.create({
@@ -17,7 +24,7 @@ export const createProduct: RequestHandler = catchAsync(
       purchasePrice,
       salePrice,
       stock,
-      quantity,
+      unitAmount,
       unit,
       category,
       createdBy: req.user?._id,
@@ -105,8 +112,15 @@ export const updateProduct: RequestHandler = catchAsync(
     if (!id) {
       throw new AppError(httpStatus.BAD_REQUEST, 'Product id is required');
     }
-    const { name, purchasePrice, salePrice, stock, unit, quantity, category } =
-      req.body;
+    const {
+      name,
+      purchasePrice,
+      salePrice,
+      stock,
+      unit,
+      unitAmount,
+      category,
+    } = req.body;
 
     const product = await Product.findById(id);
 
@@ -129,7 +143,7 @@ export const updateProduct: RequestHandler = catchAsync(
         salePrice,
         stock,
         unit,
-        quantity,
+        unitAmount,
         category,
       },
       { new: true },
