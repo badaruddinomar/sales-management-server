@@ -11,6 +11,7 @@ export interface ISale {
   _id: string;
   customerName: string;
   customerPhone: string;
+  gender: 'male' | 'female';
   products: {
     product: ObjectId;
     unitAmount: number;

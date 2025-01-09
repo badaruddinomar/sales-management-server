@@ -12,6 +12,7 @@ const generateFakeSales = async (count: number) => {
   for (let i = 0; i < count; i++) {
     const customerName = faker.word.words(3);
     const customerPhone = faker.phone.number();
+    const gender = faker.helpers.arrayElement(['male', 'female']);
     const saleDate = faker.date.recent();
     const paymentMethod = faker.helpers.arrayElement([
       'CASH',
@@ -33,6 +34,7 @@ const generateFakeSales = async (count: number) => {
     const sale = {
       customerName,
       customerPhone,
+      gender,
       products: saleProducts,
       totalAmount: parseFloat(totalAmount),
       paymentMethod,

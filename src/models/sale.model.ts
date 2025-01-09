@@ -12,6 +12,10 @@ const saleSchema = new mongoose.Schema<ISale>(
       type: String,
       required: [true, 'Customer phone is required'],
     },
+    gender: {
+      type: String,
+      enum: ['male', 'female'],
+    },
     products: [
       {
         product: {

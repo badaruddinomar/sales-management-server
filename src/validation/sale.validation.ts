@@ -7,6 +7,7 @@ export const createSaleSchema = z.object({
     .regex(/^[0-9]+$/, 'Customer phone must contain only numbers')
     .min(10, 'Customer phone must be at least 10 digits')
     .max(15, 'Customer phone must be at most 15 digits'),
+  gender: z.enum(['male', 'female']),
   products: z
     .array(
       z.object({
@@ -36,6 +37,7 @@ export const updateSaleSchema = z.object({
     .min(10, 'Customer phone must be at least 10 digits')
     .max(15, 'Customer phone must be at most 15 digits')
     .optional(),
+  gender: z.enum(['male', 'female']).optional(),
   products: z
     .array(
       z.object({
