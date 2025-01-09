@@ -168,3 +168,43 @@ export const getStats: RequestHandler = catchAsync(
     }
   },
 );
+
+export const getPieChartStats: RequestHandler = catchAsync(
+  async (req: Request, res: Response) => {
+    const sales = await Sale.find({
+      createdBy: req.user?._id,
+    });
+    const maleCustomer = sales.filter(
+      (sale: ISale) => sale.gender === 'male',
+    ).length;
+    const femaleCustomer = sales.filter(
+      (sale: ISale) => sale.gender === 'female',
+    ).length;
+    const genderRatio = {
+      male: maleCustomer,
+      female: femaleCustomer,
+    };
+    const totalCashPayments = sales.filter(
+      (sale: ISale) => sale.paymentMethod === 'CASH',
+    ).length;
+    const totalCardPayments = sales.filter(
+      (sale: ISale) => sale.paymentMethod === 'CARD',
+    ).length;
+    const totalOnlinePayments = sales.filter(
+      (sale: ISale) => sale.paymentMethod === 'ONLINE',
+    ).length;
+    const paymentRatio = {
+      cash: totalCashPayments,
+      card: totalCardPayments,
+      online: totalOnlinePayments,
+    };
+    res.status(httpStatus.OK).json({
+      success: true,
+      message: 'Stats fetched successfully',
+      data: {
+        genderRatio,
+        paymentRatio,
+      },
+    });
+  },
+);
