@@ -3,6 +3,7 @@ import { ObjectId } from 'mongoose';
 export interface IProductSearchQuery {
   name?: { $regex: string; $options: string };
   category?: string;
+  stock?: string;
   createdBy: string;
 }
 export interface IProduct {

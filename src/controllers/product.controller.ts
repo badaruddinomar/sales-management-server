@@ -39,7 +39,7 @@ export const createProduct: RequestHandler = catchAsync(
 );
 export const getAllProducts: RequestHandler = catchAsync(
   async (req: Request, res: Response) => {
-    const { search } = req.query;
+    const { search, category, stock } = req.query;
 
     const limit = parseInt(req.query.limit as string) || 10;
     const page = parseInt(req.query.page as string) || 1;
@@ -47,9 +47,9 @@ export const getAllProducts: RequestHandler = catchAsync(
     const sort = req.query.sort === 'asc' ? 1 : -1;
 
     const query: IProductSearchQuery = { createdBy: req.user?._id };
-    if (search) {
-      query.name = { $regex: search as string, $options: 'i' };
-    }
+    if (search) query.name = { $regex: search as string, $options: 'i' };
+    if (category) query.category = category as string;
+    if (stock) query.stock = stock as string;
 
     const products = await Product.find(query)
       .skip(skip)
