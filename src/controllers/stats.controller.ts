@@ -1,10 +1,21 @@
+import { dayConst, monthsConst } from './../constants/index';
 import { Request, Response, RequestHandler, NextFunction } from 'express';
 import httpStatus from 'http-status';
 import catchAsync from '../utils/catchAsync';
 import Product from '../models/product.model';
 import Sale from '../models/sale.model';
 import { ISale } from '../types/sale.types';
-import { subMonths, startOfMonth, endOfMonth } from 'date-fns';
+import {
+  startOfWeek,
+  endOfWeek,
+  startOfMonth,
+  endOfMonth,
+  subWeeks,
+  startOfYear,
+  endOfYear,
+  subMonths,
+  subYears,
+} from 'date-fns';
 import AppError from '../utils/AppError';
 
 export const getStats: RequestHandler = catchAsync(
@@ -204,6 +215,92 @@ export const getPieChartStats: RequestHandler = catchAsync(
       data: {
         genderRatio,
         paymentRatio,
+      },
+    });
+  },
+);
+
+export const getRevenueLineChartStats: RequestHandler = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    let range = req.query.range;
+    if (!range) range = 'this_week';
+    let startDate: Date, endDate: Date;
+    const now = new Date();
+
+    switch (range) {
+      case 'this_week':
+        startDate = startOfWeek(now, { weekStartsOn: 0 }); // Sunday
+        endDate = endOfWeek(now, { weekStartsOn: 0 });
+        break;
+      case 'last_week':
+        startDate = startOfWeek(subWeeks(now, 1), { weekStartsOn: 0 });
+        endDate = endOfWeek(subWeeks(now, 1), { weekStartsOn: 0 });
+        break;
+      case 'last_six_months':
+        startDate = subMonths(now, 6);
+        endDate = now;
+        break;
+      case 'this_year':
+        startDate = startOfYear(now);
+        endDate = now;
+        break;
+      case 'last_year':
+        startDate = startOfYear(subYears(now, 1));
+        endDate = endOfYear(subYears(now, 1));
+        break;
+      default:
+        throw next(new AppError(httpStatus.BAD_REQUEST, 'Invalid date range'));
+    }
+
+    // Fetch sales within the date range
+    const sales = await Sale.find({
+      createdBy: req.user?._id,
+      saleDate: { $gte: startDate, $lte: endDate },
+    });
+
+    // Group sales data and generate labels
+    const labels: string[] = [];
+    const groupedData: { [key: string]: number } = {};
+
+    if (range === 'this_week' || range === 'last_week') {
+      // Weekly data: Group by day of the week
+      dayConst.forEach((day) => {
+        labels.push(day);
+        groupedData[day] = 0;
+      });
+
+      sales.forEach((sale) => {
+        const day = dayConst[new Date(sale.createdAt).getDay()];
+        groupedData[day] += sale.totalAmount;
+      });
+    } else if (
+      range === 'this_year' ||
+      range === 'last_year' ||
+      range === 'last_six_months'
+    ) {
+      // Yearly or Monthly data: Group by month
+
+      monthsConst.forEach((month) => {
+        labels.push(month);
+        groupedData[month] = 0;
+      });
+
+      sales.forEach((sale) => {
+        const month = monthsConst[new Date(sale.createdAt).getMonth()];
+        let amount = sale.totalAmount;
+        groupedData[month] += amount;
+      });
+    }
+
+    // Convert grouped data into datasets
+    const data = labels.map((label) => groupedData[label] || 0);
+
+    res.status(httpStatus.OK).json({
+      success: true,
+      message: 'Revenue Stats fetched successfully',
+      data: {
+        labels,
+        data,
       },
     });
   },
